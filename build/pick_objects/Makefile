@@ -68,16 +68,6 @@ install/fast: preinstall/fast
 	/usr/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
 # Special rule for the target test
 test:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running tests..."
@@ -122,6 +112,16 @@ install/strip/fast: install/strip
 
 .PHONY : install/strip/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -164,6 +164,21 @@ preinstall/fast:
 depend:
 	cd /home/workspace/catkin_ws/build && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+# Convenience name for target.
+pick_objects/CMakeFiles/pick_objects.dir/rule:
+	cd /home/workspace/catkin_ws/build && $(MAKE) -f CMakeFiles/Makefile2 pick_objects/CMakeFiles/pick_objects.dir/rule
+.PHONY : pick_objects/CMakeFiles/pick_objects.dir/rule
+
+# Convenience name for target.
+pick_objects: pick_objects/CMakeFiles/pick_objects.dir/rule
+
+.PHONY : pick_objects
+
+# fast build rule for target.
+pick_objects/fast:
+	cd /home/workspace/catkin_ws/build && $(MAKE) -f pick_objects/CMakeFiles/pick_objects.dir/build.make pick_objects/CMakeFiles/pick_objects.dir/build
+.PHONY : pick_objects/fast
 
 # Convenience name for target.
 pick_objects/CMakeFiles/move_base_msgs_generate_messages_py.dir/rule:
@@ -615,6 +630,33 @@ rosgraph_msgs_generate_messages_lisp/fast:
 	cd /home/workspace/catkin_ws/build && $(MAKE) -f pick_objects/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build.make pick_objects/CMakeFiles/rosgraph_msgs_generate_messages_lisp.dir/build
 .PHONY : rosgraph_msgs_generate_messages_lisp/fast
 
+src/pick_objects.o: src/pick_objects.cpp.o
+
+.PHONY : src/pick_objects.o
+
+# target to build an object file
+src/pick_objects.cpp.o:
+	cd /home/workspace/catkin_ws/build && $(MAKE) -f pick_objects/CMakeFiles/pick_objects.dir/build.make pick_objects/CMakeFiles/pick_objects.dir/src/pick_objects.cpp.o
+.PHONY : src/pick_objects.cpp.o
+
+src/pick_objects.i: src/pick_objects.cpp.i
+
+.PHONY : src/pick_objects.i
+
+# target to preprocess a source file
+src/pick_objects.cpp.i:
+	cd /home/workspace/catkin_ws/build && $(MAKE) -f pick_objects/CMakeFiles/pick_objects.dir/build.make pick_objects/CMakeFiles/pick_objects.dir/src/pick_objects.cpp.i
+.PHONY : src/pick_objects.cpp.i
+
+src/pick_objects.s: src/pick_objects.cpp.s
+
+.PHONY : src/pick_objects.s
+
+# target to generate assembly for a file
+src/pick_objects.cpp.s:
+	cd /home/workspace/catkin_ws/build && $(MAKE) -f pick_objects/CMakeFiles/pick_objects.dir/build.make pick_objects/CMakeFiles/pick_objects.dir/src/pick_objects.cpp.s
+.PHONY : src/pick_objects.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -622,11 +664,12 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... install"
-	@echo "... list_install_components"
 	@echo "... test"
 	@echo "... edit_cache"
 	@echo "... install/local"
 	@echo "... install/strip"
+	@echo "... list_install_components"
+	@echo "... pick_objects"
 	@echo "... move_base_msgs_generate_messages_py"
 	@echo "... rosgraph_msgs_generate_messages_nodejs"
 	@echo "... actionlib_msgs_generate_messages_cpp"
@@ -658,6 +701,9 @@ help:
 	@echo "... rosgraph_msgs_generate_messages_py"
 	@echo "... roscpp_generate_messages_nodejs"
 	@echo "... rosgraph_msgs_generate_messages_lisp"
+	@echo "... src/pick_objects.o"
+	@echo "... src/pick_objects.i"
+	@echo "... src/pick_objects.s"
 .PHONY : help
 
 
