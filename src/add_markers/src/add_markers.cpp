@@ -1,19 +1,34 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
+#include <nav_msgs/Odometry.h>
 
+double odom_x;
+double odom_y;
+
+void getOdomValues(const nav_msgs::Odometry::ConstPtr& msg ){
+  
+  odom_x = msg->pose.pose.position.x;
+  odom_y = msg->pose.pose.position.y;
+  ROS_INFO("x: %f, y: %f", odom_x, odom_y);
+  
+}
+  
 int main( int argc, char** argv )
 {
   ros::init(argc, argv, "basic_shapes");
   ros::NodeHandle n;
   ros::Rate r(1);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
-
+  ros::Subscriber sub = n.subscribe("/odom", 10, getOdomValues);
+    
+  double dropOffX = -2.0; 
+  double dropOffY = -4.0;
+    
   // Set our initial shape type to be a cube
   uint32_t shape = visualization_msgs::Marker::CUBE;
-
   while (ros::ok())
   {
-    visualization_msgs::Marker marker;
+      visualization_msgs::Marker marker;
     // Set the frame ID and timestamp.  See the TF tutorials for information on these.
     marker.header.frame_id = "map";
     marker.header.stamp = ros::Time::now();
@@ -64,28 +79,28 @@ int main( int argc, char** argv )
       sleep(1);
     }
     
-   
     
-    marker_pub.publish(marker);
+    if((marker.pose.position.x == odom_y) & (marker.pose.position.y == odom_x )){
+      
+      sleep(5);
+      ROS_INFO("Picking Up");
+      marker.action = visualization_msgs::Marker::DELETE;
+      marker_pub.publish(marker);
+    }else if((odom_y == dropOffX) & (odom_x == dropOffY )){
+      
+      ROS_INFO("Dropping Off");
+      marker.action = visualization_msgs::Marker::ADD;
+      marker.pose.position.x = dropOffX;
+      marker.pose.position.y = dropOffY;
+      marker.pose.position.z = 0;
+      marker_pub.publish(marker);
+    }else{
+      marker_pub.publish(marker);
+    }
     
-    sleep(5);
-    ROS_INFO("DELETING");
-    marker.action = visualization_msgs::Marker::DELETE;
-    marker_pub.publish(marker);
-
-    ROS_INFO("ADDING NEW");
-    marker.action = visualization_msgs::Marker::ADD;
-    marker.pose.position.x = -2.0;
-    marker.pose.position.y = -4.0;
-    marker.pose.position.z = 0;
-    marker_pub.publish(marker);
-    
-    sleep(5);
-    ROS_INFO("DELETING NEW");
-    marker.action = visualization_msgs::Marker::DELETE;
-    
-    marker_pub.publish(marker);
-
+    ros::spin();
     r.sleep();
   }
+
+ 
 }
