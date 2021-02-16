@@ -1,15 +1,15 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
-#include <nav_msgs/Odometry.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 
-double odom_x;
-double odom_y;
+double pose_x;
+double pose_y;
 
-void getOdomValues(const nav_msgs::Odometry::ConstPtr& msg ){
+void getRobotPoseValues(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg ){
   
-  odom_x = msg->pose.pose.position.x;
-  odom_y = msg->pose.pose.position.y;
-  ROS_INFO("x: %f, y: %f", odom_x, odom_y);
+  pose_x = msg->pose.pose.position.x;
+  pose_y = msg->pose.pose.position.y;
+  ROS_INFO("x: %f, y: %f", pose_x, pose_y);
   
 }
   
@@ -19,7 +19,7 @@ int main( int argc, char** argv )
   ros::NodeHandle n;
   ros::Rate r(1);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
-  ros::Subscriber sub = n.subscribe("/odom", 10, getOdomValues);
+  ros::Subscriber sub = n.subscribe("/amcl_pose", 100, getRobotPoseValues);
     
   double dropOffX = -2.0; 
   double dropOffY = -4.0;
@@ -28,7 +28,8 @@ int main( int argc, char** argv )
   uint32_t shape = visualization_msgs::Marker::CUBE;
   while (ros::ok())
   {
-      visualization_msgs::Marker marker;
+      
+    visualization_msgs::Marker marker;
     // Set the frame ID and timestamp.  See the TF tutorials for information on these.
     marker.header.frame_id = "map";
     marker.header.stamp = ros::Time::now();
@@ -80,13 +81,13 @@ int main( int argc, char** argv )
     }
     
     
-    if((marker.pose.position.x == odom_y) & (marker.pose.position.y == odom_x )){
+    if((marker.pose.position.x == pose_x) & (marker.pose.position.y == pose_y )){
       
       sleep(5);
       ROS_INFO("Picking Up");
       marker.action = visualization_msgs::Marker::DELETE;
       marker_pub.publish(marker);
-    }else if((odom_y == dropOffX) & (odom_x == dropOffY )){
+    }else if((pose_x == dropOffX) & (pose_y == dropOffY )){
       
       ROS_INFO("Dropping Off");
       marker.action = visualization_msgs::Marker::ADD;
