@@ -13,6 +13,8 @@ visualization_msgs/Marker.h
 -
 geometry_msgs/PoseWithCovarianceStamped.h
 -
+vector
+-
 
 /opt/ros/kinetic/include/geometry_msgs/Point.h
 string

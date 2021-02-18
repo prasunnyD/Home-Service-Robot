@@ -1,17 +1,35 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <vector>
 
 double pose_x;
 double pose_y;
 
-void getRobotPoseValues(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg ){
+void getRobotPoseValue(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg){
   
   pose_x = msg->pose.pose.position.x;
   pose_y = msg->pose.pose.position.y;
-  ROS_INFO("x: %f, y: %f", pose_x, pose_y);
   
 }
+
+double calculatePickUpDistance(double markerLocationX, double markerLocationY, double robotX, double robotY){
+  
+  double pickUp_distanceX = markerLocationX - robotX;
+  double pickUp_distanceY = markerLocationY - robotY;
+  double pickUp_distance = sqrt(pow(pickUp_distanceY, 2) + pow(pickUp_distanceX, 2)); // distance formula
+  return pickUp_distance;
+  
+}
+
+double calculateDropOffDistance(double dropOffX, double dropOffY, double robotX, double robotY){
+  
+  double dropOff_distanceX = dropOffX - robotX;
+  double dropOff_distanceY = dropOffY -robotY;
+  double dropOff_distance = sqrt(pow(dropOff_distanceY, 2) + pow(dropOff_distanceX, 2));
+  return dropOff_distance;
+}
+  
   
 int main( int argc, char** argv )
 {
@@ -19,10 +37,14 @@ int main( int argc, char** argv )
   ros::NodeHandle n;
   ros::Rate r(1);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
-  ros::Subscriber sub = n.subscribe("/amcl_pose", 100, getRobotPoseValues);
+  ros::Subscriber sub = n.subscribe("/amcl_pose", 100, getRobotPoseValue);
+  
+  
     
-  double dropOffX = -2.0; 
-  double dropOffY = -4.0;
+  double dropOffX = -4.0; 
+  double dropOffY = -6.0;
+  bool pickedUp = false;
+  double acceptance_distance = 0.2;
     
   // Set our initial shape type to be a cube
   uint32_t shape = visualization_msgs::Marker::CUBE;
@@ -81,13 +103,23 @@ int main( int argc, char** argv )
     }
     
     
-    if((marker.pose.position.x == pose_x) & (marker.pose.position.y == pose_y )){
+    ROS_INFO("pose_X: %f, pose_Y: %f", pose_x, pose_y);
+    
+    double pickUp_distance = calculatePickUpDistance(marker.pose.position.x, marker.pose.position.y, pose_x, pose_y);
+    ROS_INFO("pickUp_distance: %f", pickUp_distance);
+    
+    double dropOff_distance = calculateDropOffDistance(dropOffX, dropOffY, pose_x, pose_y);
+    ROS_INFO("dropOff_distance: %f", dropOff_distance);
+    
+                                    
+    if(pickUp_distance <= acceptance_distance){
       
-      sleep(5);
       ROS_INFO("Picking Up");
       marker.action = visualization_msgs::Marker::DELETE;
       marker_pub.publish(marker);
-    }else if((pose_x == dropOffX) & (pose_y == dropOffY )){
+      pickedUp = true;
+      
+    }else if(dropOff_distance <= acceptance_distance & pickedUp == true){
       
       ROS_INFO("Dropping Off");
       marker.action = visualization_msgs::Marker::ADD;
@@ -95,11 +127,14 @@ int main( int argc, char** argv )
       marker.pose.position.y = dropOffY;
       marker.pose.position.z = 0;
       marker_pub.publish(marker);
-    }else{
+      
+    }
+    
+    if(pickedUp != true){
       marker_pub.publish(marker);
     }
     
-    ros::spin();
+    ros::spinOnce();
     r.sleep();
   }
 
