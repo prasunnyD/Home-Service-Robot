@@ -39,11 +39,17 @@ int main( int argc, char** argv )
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
   ros::Subscriber sub = n.subscribe("/amcl_pose", 100, getRobotPoseValue);
   
-  
-    
-  double dropOffX = -4.0; 
-  double dropOffY = -6.0;
+  // Setting parameters of pick up and drop off goals
+  double dropOffX;
+  n.getParam("drop_off_goal_x" , dropOffX);
+  double dropOffY;
+  n.getParam("drop_off_goal_y" , dropOffY);
+  double pickUpX;
+  n.getParam("pick_up_goal_x" , pickUpX);
+  double pickUpY;
+  n.getParam("pick_up_goal_y" , pickUpY);
   bool pickedUp = false;
+  // Buffer distance accounting for error 
   double acceptance_distance = 0.2;
     
   // Set our initial shape type to be a cube
@@ -70,8 +76,8 @@ int main( int argc, char** argv )
     marker.action = visualization_msgs::Marker::ADD;
 
     // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-    marker.pose.position.x = -2.0;
-    marker.pose.position.y = 1;
+    marker.pose.position.x = pickUpX;
+    marker.pose.position.y = pickUpY;
     marker.pose.position.z = 0;
     marker.pose.orientation.x = 0.0;
     marker.pose.orientation.y = 0.0;
@@ -105,7 +111,7 @@ int main( int argc, char** argv )
     
     ROS_INFO("pose_X: %f, pose_Y: %f", pose_x, pose_y);
     
-    double pickUp_distance = calculatePickUpDistance(marker.pose.position.x, marker.pose.position.y, pose_x, pose_y);
+    double pickUp_distance = calculatePickUpDistance(pickUpX, pickUpY, pose_x, pose_y);
     ROS_INFO("pickUp_distance: %f", pickUp_distance);
     
     double dropOff_distance = calculateDropOffDistance(dropOffX, dropOffY, pose_x, pose_y);
@@ -114,14 +120,15 @@ int main( int argc, char** argv )
                                     
     if(pickUp_distance <= acceptance_distance){
       
-      ROS_INFO("Picking Up");
+      ROS_INFO("PICKING UP");
       marker.action = visualization_msgs::Marker::DELETE;
       marker_pub.publish(marker);
+      sleep(5);
       pickedUp = true;
       
     }else if(dropOff_distance <= acceptance_distance & pickedUp == true){
       
-      ROS_INFO("Dropping Off");
+      ROS_INFO("DROPPING OFF");
       marker.action = visualization_msgs::Marker::ADD;
       marker.pose.position.x = dropOffX;
       marker.pose.position.y = dropOffY;

@@ -1,0 +1,4 @@
+pick_up_goal_x: -2.0
+pick_up_goal_y: 1.0
+drop_off_goal_x: -4.0
+drop_off_goal_y: -6.0
