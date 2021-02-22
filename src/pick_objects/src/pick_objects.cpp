@@ -73,5 +73,7 @@ int main(int argc, char** argv){
   else
     ROS_INFO("The base failed to reach drop off zone");
   
+  sleep(5);
+  
   return 0;
 }
