@@ -1,6 +1,6 @@
 # Home-Service-Robot
 ### Project Purpose
-This project simulates an autonomous robot that picks up an object and drop it off at predetermined locations. 
+This project simulates an autonomous robot that picks up an object and drops it off at predetermined locations. 
 
 ### Packages Used:
 #### Ros Packages
@@ -18,6 +18,10 @@ This project simulates an autonomous robot that picks up an object and drop it o
   * This package sends pick up and drop off goals to the robot which then uses the ROS navigation stack to reach the goal. Pick_objects package drives the navigation of the robot.
 * [add_markers](https://github.com/prasunnyD/Home-Service-Robot/tree/master/src/add_markers)
   * This package publishes a virtual object in Rviz that appears in the pick up goal location. Once the robot reaches the pick up location the object disappears and the robot is then directed to the drop off goal location by the pick_objects package. Once the robot reaches the drop off the goal location then the object appears. 
+
+### To use this Repo:
+
+First create a catkin workspace
 
 To launch the home service, type in these commands in the catkin workspace. 
 ```
