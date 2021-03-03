@@ -1,5 +1,5 @@
 # Home-Service-Robot
-##Project Purpose
+## Project Purpose
 This project simulates an autonomous robot that picks up an object and drop it off at predetermined locations. 
 
 
