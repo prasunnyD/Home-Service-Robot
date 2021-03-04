@@ -21,15 +21,15 @@ This project simulates an autonomous robot that picks up an object and drops it 
 
 ### Scripts
 * ./test_slam.sh
-  * allows user to teleop the robot and have it interface with SLAM to visualize the map in RViz
+   * allows user to teleop the robot and have it interface with SLAM to visualize the map in RViz
 * ./test_navigation.sh
- * users can give a direction to the robot with 2D nav goal in rviz and using the ROS navigation stack it will localize itself and reach the goal.
+  * users can give a direction to the robot with 2D nav goal in rviz and using the ROS navigation stack it will localize itself and reach the goal.
 * ./pick_objects.sh
- * robot drives to pick up location and drop off location.
+  * robot drives to pick up location and drop off location.
 * ./add_markers/sh
- * marker appears at pick up location waits 5 secs then appears at drop off location
+  * marker appears at pick up location waits 5 secs then appears at drop off location
 * ./home_service/sh
- * robot autonomously drivers to pick up location picks up object and the drives to drop off location and drops off object. 
+  * robot autonomously drivers to pick up location picks up object and the drives to drop off location and drops off object. 
 
 ### To use this Repo:
 
