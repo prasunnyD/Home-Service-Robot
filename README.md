@@ -19,9 +19,22 @@ This project simulates an autonomous robot that picks up an object and drops it 
 * [add_markers](https://github.com/prasunnyD/Home-Service-Robot/tree/master/src/add_markers)
   * This package publishes a virtual object in Rviz that appears in the pick up goal location. Once the robot reaches the pick up location the object disappears and the robot is then directed to the drop off goal location by the pick_objects package. Once the robot reaches the drop off the goal location then the object appears. 
 
+### Scripts
+* ./test_slam.sh
+  * allows user to teleop the robot and have it interface with SLAM to visualize the map in RViz
+* ./test_navigation.sh
+ * users can give a direction to the robot with 2D nav goal in rviz and using the ROS navigation stack it will localize itself and reach the goal.
+* ./pick_objects.sh
+ * robot drives to pick up location and drop off location.
+* ./add_markers/sh
+ * marker appears at pick up location waits 5 secs then appears at drop off location
+* ./home_service/sh
+ * robot autonomously drivers to pick up location picks up object and the drives to drop off location and drops off object. 
+
 ### To use this Repo:
 
 First create a catkin workspace
+[See catkin tutorial](http://wiki.ros.org/ROS/Tutorials/catkin/CreateWorkspace)
 
 To launch the home service, type in these commands in the catkin workspace. 
 ```
@@ -30,3 +43,25 @@ To launch the home service, type in these commands in the catkin workspace.
 > cd src/scripts
 > ./home_service.sh
 ```
+
+The home service script
+```
+#!/bin/sh
+xterm  -e  " roslaunch turtlebot_gazebo turtlebot_world.launch world_file:=$(rospack find my_robot)/worlds/prasunworld.world " &
+sleep 5
+xterm  -e  " roslaunch turtlebot_gazebo amcl_demo.launch map_file:=$(rospack find my_robot)/maps/map.yaml " &
+#xterm  -e  " roslaunch my_robot amcl.launch " &
+sleep 5
+xterm  -e  " roslaunch turtlebot_rviz_launchers view_navigation.launch " & 
+sleep 5
+xterm  -e  " rosrun pick_objects pick_objects " &
+sleep 5
+xterm  -e  " rosrun add_markers add_markers " 
+```
+Launches the:
+* gazebo world (provided my own world)
+* AMCL package that localizes the robot (provided map of my world)
+* RViz and rviz config file
+* pick_objects and add_markers package
+
+
