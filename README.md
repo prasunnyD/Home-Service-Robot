@@ -67,4 +67,4 @@ Launches the:
 
 ![Robot Picking Up](pictures/robot_picking_up_object.png)
 ![Object picked Up](pictures/object_picked_up.png)
-![Object dropped off](pictures/object_dropped_off.png)
+![Object dropped off](pictures/object_dropped _off.png)
